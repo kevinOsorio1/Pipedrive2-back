@@ -61,9 +61,9 @@ db.define_table('price',
     Field('update_time', 'datetime', default=request.now),
     format='%(name)s')
 
-#db.user.email.requires = IS_NOT_IN_DB(db, 'user.email')
-#db.user.email.requires = IS_NOT_EMPTY()
-#db.user.passwd.requires = IS_NOT_EMPTY()
+db.user.email.requires = IS_NOT_IN_DB(db, 'user.email')
+db.user.email.requires = IS_NOT_EMPTY()
+db.user.passwd.requires = IS_NOT_EMPTY()
 
 db.category.name.requires = IS_NOT_EMPTY()
 

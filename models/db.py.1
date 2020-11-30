@@ -1,4 +1,4 @@
-db = DAL('mysql://root@localhost:8080/pypedrive2')
+db = DAL('mysql://root@localhost:8080/pipedrive2')
 
 from gluon.contrib.appconfig import AppConfig
 from gluon.tools import Auth
@@ -23,7 +23,7 @@ db.define_table('item',
     Field('description', type="string", length=256),
     Field('unit'),
     Field('tax',type='double'),
-    Field('owner_id','reference auth_user'),
+    Field('owner_id','reference auth user'),
     Field('category_id','reference category'),
     Field('enabled', type='boolean'),
     Field('add_time', 'datetime', default=request.now),
@@ -61,9 +61,9 @@ db.define_table('price',
     Field('update_time', 'datetime', default=request.now),
     format='%(name)s')
 
-#db.user.email.requires = IS_NOT_IN_DB(db, 'user.email')
-#db.user.email.requires = IS_NOT_EMPTY()
-#db.user.passwd.requires = IS_NOT_EMPTY()
+db.user.email.requires = IS_NOT_IN_DB(db, 'user.email')
+db.user.email.requires = IS_NOT_EMPTY()
+db.user.passwd.requires = IS_NOT_EMPTY()
 
 db.category.name.requires = IS_NOT_EMPTY()
 
