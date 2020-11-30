@@ -1,155 +1,90 @@
-# -*- coding: utf-8 -*-
+db = DAL('mysql://user1:user1@localhost:3306/pipedrive2')
 
-# -------------------------------------------------------------------------
-# AppConfig configuration made easy. Look inside private/appconfig.ini
-# Auth is for authenticaiton and access control
-# -------------------------------------------------------------------------
 from gluon.contrib.appconfig import AppConfig
 from gluon.tools import Auth
+from gluon.tools import Crud
+auth = Auth(db)
+auth.define_tables()
+crud = Crud(db)
 
-# -------------------------------------------------------------------------
-# This scaffolding model makes your app work on Google App Engine too
-# File is released under public domain and you can use without limitations
-# -------------------------------------------------------------------------
+db.define_table('user',
+    Field('name'),
+    Field('email'),
+    Field('passwd'),
+    format='%(name)s')
 
-if request.global_settings.web2py_version < "2.15.5":
-    raise HTTP(500, "Requires web2py 2.15.5 or newer")
+db.define_table('category',
+    Field('name'),
+    format='%(name)s')
 
-# -------------------------------------------------------------------------
-# if SSL/HTTPS is properly configured and you want all HTTP requests to
-# be redirected to HTTPS, uncomment the line below:
-# -------------------------------------------------------------------------
-# request.requires_https()
+db.define_table('item',
+    Field('name',),
+    Field('code'),
+    Field('description', type="string", length=256),
+    Field('unit'),
+    Field('tax',type='double'),
+    Field('owner_id','reference user'),
+    Field('category_id','reference category'),
+    Field('enabled', type='boolean'),
+    Field('add_time', 'datetime', default=request.now),
+    Field('update_time', 'datetime', default=request.now),
+    format='%(name)s')
 
-# -------------------------------------------------------------------------
-# once in production, remove reload=True to gain full speed
-# -------------------------------------------------------------------------
-configuration = AppConfig(reload=True)
+db.define_table('currency',
+    Field('code'),
+    Field('name'),
+    Field('symbol'),
+    Field('decimal_points',type='integer', default=0),
+    Field('status',type='integer', default=1),
+    Field('add_time', 'datetime', default=request.now),
+    Field('update_time', 'datetime', default=request.now),
+    format='%(name)s')
 
-if not request.env.web2py_runtime_gae:
-    # ---------------------------------------------------------------------
-    # if NOT running on Google App Engine use SQLite or other DB
-    # ---------------------------------------------------------------------
-    db = DAL(configuration.get('db.uri'),
-             pool_size=configuration.get('db.pool_size'),
-             migrate_enabled=configuration.get('db.migrate'),
-             check_reserved=['all'])
-else:
-    # ---------------------------------------------------------------------
-    # connect to Google BigTable (optional 'google:datastore://namespace')
-    # ---------------------------------------------------------------------
-    db = DAL('google:datastore+ndb')
-    # ---------------------------------------------------------------------
-    # store sessions and tickets there
-    # ---------------------------------------------------------------------
-    session.connect(request, response, db=db)
-    # ---------------------------------------------------------------------
-    # or store session in Memcache, Redis, etc.
-    # from gluon.contrib.memdb import MEMDB
-    # from google.appengine.api.memcache import Client
-    # session.connect(request, response, db = MEMDB(Client()))
-    # ---------------------------------------------------------------------
+db.define_table('variation',
+    Field('name'),
+    Field('item_id','reference item'),
+    Field('enabled', type='boolean'),
+    Field('description'),
+    Field('add_time', 'datetime', default=request.now),
+    Field('update_time', 'datetime', default=request.now),
+    format='%(name)s')
 
-# -------------------------------------------------------------------------
-# by default give a view/generic.extension to all actions from localhost
-# none otherwise. a pattern can be 'controller/function.extension'
-# -------------------------------------------------------------------------
-response.generic_patterns = [] 
-if request.is_local and not configuration.get('app.production'):
-    response.generic_patterns.append('*')
+db.define_table('price',
+    Field('price',type='double'),
+    Field('reference_id'),
+    Field('is_variation', type='boolean', default=False),
+    Field('currency_id','reference currency'),
+    Field('cost',type='double'),
+    Field('overhead_cost',type='double'),
+    Field('comment', type="string", length=256),
+    Field('add_time', 'datetime', default=request.now),
+    Field('update_time', 'datetime', default=request.now),
+    format='%(name)s')
 
-# -------------------------------------------------------------------------
-# choose a style for forms
-# -------------------------------------------------------------------------
-response.formstyle = 'bootstrap4_inline'
-response.form_label_separator = ''
+db.user.email.requires = IS_NOT_IN_DB(db, 'user.email')
+db.user.email.requires = IS_NOT_EMPTY()
+db.user.passwd.requires = IS_NOT_EMPTY()
 
-# -------------------------------------------------------------------------
-# (optional) optimize handling of static files
-# -------------------------------------------------------------------------
-# response.optimize_css = 'concat,minify,inline'
-# response.optimize_js = 'concat,minify,inline'
+db.category.name.requires = IS_NOT_EMPTY()
 
-# -------------------------------------------------------------------------
-# (optional) static assets folder versioning
-# -------------------------------------------------------------------------
-# response.static_version = '0.0.0'
+db.item.name.requires = IS_NOT_EMPTY()
+db.item.owner_id.requires = IS_NOT_EMPTY()
+db.item.add_time.readable = db.item.add_time.writable = False
+db.item.update_time.readable = db.item.update_time.writable = False
 
-# -------------------------------------------------------------------------
-# Here is sample code if you need for
-# - email capabilities
-# - authentication (registration, login, logout, ... )
-# - authorization (role based authorization)
-# - services (xml, csv, json, xmlrpc, jsonrpc, amf, rss)
-# - old style crud actions
-# (more options discussed in gluon/tools.py)
-# -------------------------------------------------------------------------
+db.currency.code.requires = IS_NOT_IN_DB(db, 'currency.code')
+db.currency.code.requires = IS_NOT_EMPTY()
+db.currency.name.requires = IS_NOT_EMPTY()
+db.currency.add_time.readable = db.currency.add_time.writable = False
+db.currency.update_time.readable = db.currency.update_time.writable = False
 
-# host names must be a list of allowed host names (glob syntax allowed)
-auth = Auth(db, host_names=configuration.get('host.names'))
+db.variation.name.requires = IS_NOT_EMPTY()
+db.variation.item_id.requires = IS_NOT_EMPTY()
+db.variation.add_time.readable = db.variation.add_time.writable = False
+db.variation.update_time.readable = db.variation.update_time.writable = False
 
-# -------------------------------------------------------------------------
-# create all tables needed by auth, maybe add a list of extra fields
-# -------------------------------------------------------------------------
-auth.settings.extra_fields['auth_user'] = []
-auth.define_tables(username=False, signature=False)
-
-# -------------------------------------------------------------------------
-# configure email
-# -------------------------------------------------------------------------
-mail = auth.settings.mailer
-mail.settings.server = 'logging' if request.is_local else configuration.get('smtp.server')
-mail.settings.sender = configuration.get('smtp.sender')
-mail.settings.login = configuration.get('smtp.login')
-mail.settings.tls = configuration.get('smtp.tls') or False
-mail.settings.ssl = configuration.get('smtp.ssl') or False
-
-# -------------------------------------------------------------------------
-# configure auth policy
-# -------------------------------------------------------------------------
-auth.settings.registration_requires_verification = False
-auth.settings.registration_requires_approval = False
-auth.settings.reset_password_requires_verification = True
-
-# -------------------------------------------------------------------------  
-# read more at http://dev.w3.org/html5/markup/meta.name.html               
-# -------------------------------------------------------------------------
-response.meta.author = configuration.get('app.author')
-response.meta.description = configuration.get('app.description')
-response.meta.keywords = configuration.get('app.keywords')
-response.meta.generator = configuration.get('app.generator')
-response.show_toolbar = configuration.get('app.toolbar')
-
-# -------------------------------------------------------------------------
-# your http://google.com/analytics id                                      
-# -------------------------------------------------------------------------
-response.google_analytics_id = configuration.get('google.analytics_id')
-
-# -------------------------------------------------------------------------
-# maybe use the scheduler
-# -------------------------------------------------------------------------
-if configuration.get('scheduler.enabled'):
-    from gluon.scheduler import Scheduler
-    scheduler = Scheduler(db, heartbeat=configuration.get('scheduler.heartbeat'))
-
-# -------------------------------------------------------------------------
-# Define your tables below (or better in another model file) for example
-#
-# >>> db.define_table('mytable', Field('myfield', 'string'))
-#
-# Fields can be 'string','text','password','integer','double','boolean'
-#       'date','time','datetime','blob','upload', 'reference TABLENAME'
-# There is an implicit 'id integer autoincrement' field
-# Consult manual for more options, validators, etc.
-#
-# More API examples for controllers:
-#
-# >>> db.mytable.insert(myfield='value')
-# >>> rows = db(db.mytable.myfield == 'value').select(db.mytable.ALL)
-# >>> for row in rows: print row.id, row.myfield
-# -------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------
-# after defining tables, uncomment below to enable auditing
-# -------------------------------------------------------------------------
-# auth.enable_record_versioning(db)
+db.price.price.requires = IS_NOT_EMPTY()
+db.price.reference_id.requires = IS_NOT_EMPTY()
+db.price.currency_id.requires = IS_NOT_EMPTY()
+db.price.add_time.readable = db.price.add_time.writable = False
+db.price.update_time.readable = db.price.update_time.writable = False
