@@ -2,15 +2,15 @@
 def api():
     response.view = 'generic.json'
 
-    def GET(*args):
-        #listar productos
-        return dict()
-    
-    def GET(*args, **vars):
-        #buscar por id
-        return dict()
+    def GET(*args,**vars):
+        patterns = 'auto'
+        parser = db.parse_as_rest(patterns,args,vars)
+        if parser.status == 200:
+            return dict(content=parser.response, arggs=args, varrs=vars)
+        else:
+            raise HTTP(parser.status,parser.error)
 
-    def POST(*args, **vars):
+    def POST(table_name, object):
         #insertar producto
         return dict()
 
