@@ -1,4 +1,4 @@
-db = DAL('mysql://root@localhost:3306/pypedrive2')
+db = DAL('mysql://root@localhost:8080/pypedrive2')
 
 from gluon.contrib.appconfig import AppConfig
 #from gluon.tools import Auth

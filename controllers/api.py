@@ -19,6 +19,7 @@ def api():
         return dict()
 
     def DELETE(table_name,record_id):
-        return db(db[table_name].id==record_id).update(status=0)
+        db(db[table_name].id==record_id).update(status=0)
+        return 'Producto ', record_id, ' eliminado'
 
     return locals()

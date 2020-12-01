@@ -22,3 +22,8 @@ def producto(id):
     producto = db((db.product.id == id) & (db.product.status == 1)).select()
     producto.category = db(db.category.id == producto.category_id).select().name
     return producto
+
+#@service.json
+#def eliminarproducto(id_delete):
+ #   del db.product[id_delete]
+  #  return productos()
