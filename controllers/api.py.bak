@@ -14,12 +14,14 @@ def api():
         #insertar producto
         return dict()
 
-    def PUT(*args, **vars):
+    def PUT(table_name, record_id,**vars):
         #actualizar producto
-        return dict()
+        db(db[table_name].id==record_id).update(**vars)
+        return db(db.product.id==record_id).select(orderby=db.product.name)
 
     def DELETE(table_name,record_id):
-        db(db[table_name].id==record_id).update(status=0)
-        return 'Producto', record_id, 'eliminado'
-
+        prod = db(db[table_name].id==record_id)
+        prod.update(status=0)
+        return 'Producto ', record_id, ' eliminado'
+        
     return locals()
