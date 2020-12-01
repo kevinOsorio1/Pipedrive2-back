@@ -20,5 +20,4 @@ def producto():
 @service.json
 def producto(id):
     producto = db((db.product.id == id) & (db.product.status == 1)).select()
-    producto.category = db(db.category.id == producto.category_id).select().name
     return producto
