@@ -8,7 +8,7 @@ def api():
         patterns = 'auto'
         parser = db.parse_as_rest(patterns,args,vars)
         if parser.status == 200:
-            return dict(content=parser.response, arggs=args[0], varrs=vars)
+            return dict(content=parser.response)
         else:
             raise HTTP(parser.status,parser.error)
 
