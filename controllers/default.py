@@ -56,3 +56,11 @@ def download():
     http://..../[app]/default/download/[filename]
     """
     return response.download(request, db)
+
+def monedas():
+    monedas = db(db.currency.status != 10).select(orderby=db.currency.code)
+    return locals()
+
+def categorias():
+    categorias = db(db.category.status != 10).select(orderby=db.category.name)
+    return locals()
