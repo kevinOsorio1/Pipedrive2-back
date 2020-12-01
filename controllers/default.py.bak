@@ -67,4 +67,3 @@ def categorias():
 
 def productos():
     productos = db(db.product.status != 10).select(orderby=db.product.name)
-    return locals()
