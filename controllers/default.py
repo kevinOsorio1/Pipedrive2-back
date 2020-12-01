@@ -1,3 +1,9 @@
+from gluon.tools import Service
+
+service = Service()
+def call():
+    session.forget()
+    return service()
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------
 # This is a sample controller
@@ -58,9 +64,18 @@ def download():
     return response.download(request, db)
 
 def monedas():
-    monedas = db(db.currency.status != 10).select(orderby=db.currency.code)
+    monedas = db(db.currency.status != 0).select(orderby=db.currency.code)
     return locals()
 
 def categorias():
-    categorias = db(db.category.status != 10).select(orderby=db.category.name)
+    categorias = db(db.category.status != 0).select(orderby=db.category.name)
     return locals()
+
+def producto():
+    categorias = db(db.product.status != 0).select(orderby=db.product.name)
+    return locals()
+
+@service.json
+def producto(id):
+    producto = db(db.product.id == id).select()
+    return producto
