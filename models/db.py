@@ -7,6 +7,7 @@ auth = Auth(db)
 auth.define_tables()
 crud = Crud(db)
 
+#comentadas por si son necesarias luego
 #db.define_table('user',
 #    Field('name'),
 #    Field('email'),
