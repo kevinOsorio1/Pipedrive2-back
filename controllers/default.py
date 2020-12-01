@@ -20,6 +20,7 @@ def producto():
 @service.json
 def producto(id):
     producto = db((db.product.id == id) & (db.product.status == 1)).select()
+<<<<<<< HEAD
     producto.category = db(db.category.id == producto.category_id).select().name
     return producto
 
@@ -27,3 +28,6 @@ def producto(id):
 #def eliminarproducto(id_delete):
  #   del db.product[id_delete]
   #  return productos()
+=======
+    return producto
+>>>>>>> 649cbd286cff0284c53429db7e5cbf5fdbe7680f
