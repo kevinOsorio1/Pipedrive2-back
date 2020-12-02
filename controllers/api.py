@@ -75,19 +75,22 @@ def api():
         patterns = 'auto'
         parser = db.parse_as_rest(patterns, args, vars)
         if parser.status == 200:
+            message = "Operacion exitosa"
             # En caso que la consulta sea de productos, se rescatan los nombres de moneda y usuario anexos
             if args[0] == 'product':
+                product = []
                 for el in parser.response:
                     category = db(db.category.id == el.category_id).select()
                     user = db(db.user.id == el.owner_id).select()
                     el.owner = user[0].name
                     if el.category_id:  # Producto puede registrarse sin categoria, por lo que es necesario validar
                         el.category = category[0].name
-                del el, category, user  # Se limpia el output
-            message = "Operacion exitosa"
+                    if el.status == 1:  # Solo se retornaran los productos 'activos' (status = 1)
+                        product.append(el)        
+                data = {'product': product}
+                return dict(message = message, data = data)
             data = {args[0]: parser.response}
-            del patterns, parser, args, vars  # Se limpia el output
-            return locals()
+            return dict(message = message, data = data)
         else:
             raise HTTP(parser.status, parser.error)
 
@@ -135,7 +138,7 @@ def api():
     return locals()
 
 ##CHRIS##
-#                     Registra una nueva actividad tras actualizar un registro, por UPDATE o DELETE(soft delete)
+# Registra una nueva actividad tras actualizar un registro, por UPDATE o DELETE(soft delete)
 def new_activity(table_name, record_id, status_old, status_new, now):
     db(db[table_name].id == record_id).update(update_time=datetime.now())
     new_activity = db.activity.validate_and_insert(
@@ -143,7 +146,7 @@ def new_activity(table_name, record_id, status_old, status_new, now):
         new_status=status_new,
         activity_time=now,
         user_id=1)  # Por defecto, hasta que se aplique Auth()
-    #                 Validacion de referencia de actividad
+    #  Validacion de referencia de actividad
     if table_name == 'product':
         db(db.activity.id == new_activity.id).update(product_id=record_id)
     if table_name == 'currency':
