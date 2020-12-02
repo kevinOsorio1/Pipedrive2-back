@@ -28,8 +28,15 @@ def api():
         return db(db.product.id==record_id).select(orderby=db.product.name)
 
     def DELETE(table_name,record_id):
-        prod = db(db[table_name].id==record_id)
-        prod.update(status=0)
-        return 'Producto ', record_id, ' eliminado'
+        #prod = db(db[table_name].id==record_id)
+        #prod.update(status=0)
+        el = db(db[table_name].id==record_id).select().first()
+        if el.status != 0:
+            el.update_record(status=0)
+            el_name = table_name[0].upper() + table_name[1:] 
+            return el_name, ' con id ', record_id, ' eliminado satisfactoriamente.'
+        else:
+            return 'No se encontraron coincidencias.'
+        
         
     return locals()
