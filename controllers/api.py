@@ -117,7 +117,8 @@ def api():
                 return 'Está intentando modificar un parametro no permitido ("id","owner_id", "status")'
 
         now = datetime.now()
-        db(db[table_name].id == record_id).update(**vars, update_time=now)
+        db(db[table_name].id == record_id).update(**vars)
+        db(db[table_name].id == record_id).update(update_time=now)
         el = db(db[table_name].id == record_id).select().first()
         new_activity(table_name, record_id, el.status, el.status, now)
         return locals()
