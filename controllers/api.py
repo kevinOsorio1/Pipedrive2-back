@@ -35,7 +35,6 @@ def api():
     #    }
     #
     #SOFT-DELETE pipedrive2/api/api/product/{id}
-    #/pipedrive2/api/api/product/{id}
     
     ##CHRIS##
     def GET(*args,**vars):
@@ -56,7 +55,8 @@ def api():
     ##CHRIS##
     def POST(table_name,**vars):
         db[table_name].validate_and_insert(**vars)
-        return 'Elemento ',table_name, " registrado satisfactoriamente"
+        return locals()
+        #return 'Elemento ',table_name, " registrado satisfactoriamente"
     
     ##AGUSTIN##
     def PUT(table_name, record_id,**vars):
