@@ -109,5 +109,5 @@ databases/*
 errors/*
 
 # keep
-databases/.gitkeep
-errors/.gitkeep 
+!databases/.gitkeep
+!errors/.gitkeep 
