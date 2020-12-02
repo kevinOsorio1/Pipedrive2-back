@@ -1,3 +1,4 @@
+from datetime import datetime
 @request.restful()
 def api():
     response.view = 'generic.json'
@@ -92,10 +93,10 @@ def api():
         if vars:#                           Se verifica que request contenga datos en el body
             insert_check = db[table_name].validate_and_insert(**vars)
             if insert_check.id:#             Verifica si se genero una id nueva
-                message = f"Elemento {table_name} registrado satisfactoriamente con id={insert_check.id}"
+                message = "Elemento {} registrado satisfactoriamente con id = {}".format(table_name, insert_check.id)
                 del insert_check#            Se limpia el outpu
             else:
-                message = f"No se ha podido registrar el elemento {table_name}. {insert_check.errors}"
+                message = "No se ha podido registrar el elemento {}. {}".format(table_name, insert_check.errors)
                 del insert_check#            Se limpia el outpu
         else:
             message = "No se puede registrar un elemento vacio"
@@ -107,7 +108,8 @@ def api():
             if el == "id" or el == "owner_id" or el == "status":
                 return 'Está intentando modificar un parametro no permitido ("id","owner_id", "status")'
                        
-        db(db[table_name].id==record_id).update(**vars)
+        now = datetime.now()
+        db(db[table_name].id==record_id).update(**vars, update_time = now)
         return locals()
 
     ##AGUSTIN##
@@ -122,3 +124,14 @@ def api():
         
         
     return locals()
+
+##CHRIS##
+#def activity(table_name,record_id, status_old, status_new, now):
+#    db(db[table_name].id==record_id).update(update_time = datetime.now())
+#    insert_check = db.activity.validate_and_insert(
+#        prev_status = status_old,
+#        new_status = status_new,
+#        activity_time = now,
+#        user_id = 1,# Por defecto, hasta que se aplique Auth()
+#
+#    )
