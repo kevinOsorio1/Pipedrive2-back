@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+#web2py folders
+# exclude
+databases/*
+errors/*
+
+# keep
+databases/.gitkeep
+errors/.gitkeep 
