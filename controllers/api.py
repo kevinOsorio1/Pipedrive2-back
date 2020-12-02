@@ -4,64 +4,107 @@ def api():
 
     #GET_ALL pipedrive2/api/api/{table_name}.json
     #
+    #    {
+    #    "message": "Operacion exitosa",
+    #    "data": {
+    #        "currency": [
+    #            {
+    #                "id": 1,
+    #                "code": "CLP",
+    #                "name": "Pesos Chilenos",
+    #                "symbol": "CLP$",
+    #                "decimal_points": 0,
+    #                "status": 1,
+    #                "add_time": "2020-12-02 10:55:15",
+    #                "update_time": null
+    #            },
+    #            { ... }
+    #    }
+    #
     #GET_BY pipedrive2/api/api/{table_name}/id/{id}.json
     #
-    #CREATE pipedrive2/api/api/product
+    #    {
+    #    "message": "Operacion exitosa",
+    #    "data": {
+    #        "currency": [
+    #            {
+    #                "id": 1,
+    #                "code": "CLP",
+    #                "name": "Pesos Chilenos",
+    #                "symbol": "CLP$",
+    #                "decimal_points": 0,
+    #                "status": 1,
+    #                "add_time": "2020-12-02 10:55:15",
+    #                "update_time": null
+    #            },
+    #            { ... }
+    #    }
+    #
+    #CREATE pipedrive2/api/api/{table_name}
     #
     #    {
-    #        "id": int,
+    #        "table_name": "currency",
+    #        "vars": {
+    #                   "decimal_points": "0",
+    #                   "name": "test",
+    #                   "code": "qaw123",
+    #                   "symbol": "CLP$"
+    #                },
+    #        "message": "Elemento currency registrado satisfactoriamente con id = 3"
+    #    }
+    #
+    #UPDATE pipedrive2/api/api/{table_name}
+    #
+    #    {
     #        "name": string,
     #        "code": string,
     #        "description": string,
     #        "unit": string,
-    #        "owner_id": int,
     #        "category_id": int,
-    #        "status": 0 | 1,
     #        "category": category,
     #        "owner": user
     #    }
     #
-    #UPDATE pipedrive2/api/api/product
-    #
-    #    {
-    #        "name": string,
-    #        "code": string,
-    #        "description": string,
-    #        "unit": string,
-    #        "category_id": int,
-    #        "status": 0 | 1,
-    #        "category": category,
-    #        "owner": user
-    #    }
-    #
-    #SOFT-DELETE pipedrive2/api/api/product/{id}
+    #SOFT-DELETE pipedrive2/api/api/{table_name}/{id}
     
     ##CHRIS##
     def GET(*args,**vars):
         patterns = 'auto'
         parser = db.parse_as_rest(patterns,args,vars)
         if parser.status == 200:
-            if args[0] == 'product':
+            if args[0] == 'product': #        En caso que la consulta sea de productos, se rescatan los nombres de moneda y usuario anexos
                 for el in parser.response:
                     category = db(db.category.id == el.category_id).select()
                     user = db(db.user.id == el.owner_id).select()
-                    el.category = category[0].name
                     el.owner = user[0].name
-            result = {args[0]:parser.response}
-            return result
+                    if el.category_id:#       Producto puede registrarse sin categoria, por lo que es necesario validar
+                        el.category = category[0].name
+                del el, category, user#       Se limpia el output
+            message = "Operacion exitosa"
+            data = {args[0]:parser.response}
+            del patterns, parser, args, vars# Se limpia el output
+            return locals()
         else:
             raise HTTP(parser.status,parser.error)
             
     ##CHRIS##
     def POST(table_name,**vars):
-        db[table_name].validate_and_insert(**vars)
+        if vars:#                           Se verifica que request contenga datos en el body
+            insert_check = db[table_name].validate_and_insert(**vars)
+            if insert_check.id:#             Verifica si se genero una id nueva
+                message = f"Elemento {table_name} registrado satisfactoriamente con id={insert_check.id}"
+                del insert_check#            Se limpia el outpu
+            else:
+                message = f"No se ha podido registrar el elemento {table_name}. {insert_check.errors}"
+                del insert_check#            Se limpia el outpu
+        else:
+            message = "No se puede registrar un elemento vacio"
         return locals()
-        #return 'Elemento ',table_name, " registrado satisfactoriamente"
     
     ##AGUSTIN##
     def PUT(table_name, record_id,**vars):
         db(db[table_name].id==record_id).update(**vars)
-        return db(db.product.id==record_id).select(orderby=db.product.name)
+        return locals()
     
     ##AGUSTIN##
     def DELETE(table_name,record_id):
