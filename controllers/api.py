@@ -7,9 +7,9 @@ def api():
     response.headers["Access-Control-Allow-Origin"] = '*'
     response.headers['Access-Control-Max-Age'] = 86400
     response.headers['Access-Control-Allow-Headers'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = "POST,GET,OPTIONS,DELETE,PUT";
     response.headers['Access-Control-Allow-Credentials'] = 'true'
-
+    
     # GET_ALL pipedrive2/api/api/{table_name}.json
     #
     #    {
@@ -139,11 +139,14 @@ def api():
             return el_name, ' con id ', record_id, ' eliminado satisfactoriamente.'
         else:
             return 'No se encontraron coincidencias.'
-        
+    
+    ##AGUSTIN##
     def OPTIONS(*args,**vars):
+        print "OPTION called"
         return True
-
-    return locals()
+    
+    return dict(GET=GET,POST=POST,PUT=PUT,DELETE=DELETE,OPTIONS=OPTIONS)
+    
 
 ##CHRIS##
 # Registra una nueva actividad tras actualizar un registro, por UPDATE o DELETE(soft delete)
