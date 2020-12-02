@@ -92,10 +92,8 @@ def api():
                         el.category = category[0].name
                     if el.status == 1:  # Solo se retornaran los productos 'activos' (status = 1)
                         product.append(el)        
-                data = {'product': product}
-                return dict(message = message, data = data)
-            data = {args[0]: parser.response}
-            return dict(message = message, data = data)
+                return dict(message = message, data = {'product': product})
+            return dict(message = message, data = {args[0]: parser.response})
         else:
             raise HTTP(parser.status, parser.error)
 
@@ -142,7 +140,6 @@ def api():
     
     ##AGUSTIN##
     def OPTIONS(*args,**vars):
-        print "OPTION called"
         return True
     
     return dict(GET=GET,POST=POST,PUT=PUT,DELETE=DELETE,OPTIONS=OPTIONS)
