@@ -95,8 +95,7 @@ db.define_table('activity',
     Field('currency_id','reference currency', requires=IS_EMPTY_OR(IS_IN_DB(db, 'currency.id'))),
     Field('tax_id','reference tax', requires=IS_EMPTY_OR(IS_IN_DB(db, 'currency.id'))),
     Field('status', type="integer"),
-    Field('add_time', 'datetime', default=request.now),
-    Field('update_time', 'datetime'),)
+    Field('add_time', 'datetime', default=request.now))
 
 db.user.email.requires = IS_NOT_IN_DB(db, 'user.email')
 db.user.email.requires = IS_NOT_EMPTY()
