@@ -16,7 +16,6 @@ def api():
     #        "unit": string,
     #        "owner_id": int,
     #        "category_id": int,
-    #        "status": 0 | 1,
     #        "category": category,
     #        "owner": user
     #    }
@@ -29,13 +28,12 @@ def api():
     #        "description": string,
     #        "unit": string,
     #        "category_id": int,
-    #        "status": 0 | 1,
     #        "category": category,
     #        "owner": user
     #    }
     #
     #SOFT-DELETE pipedrive2/api/api/product/{id}
-    #/pipedrive2/api/api/product/{id}
+
     
     ##CHRIS##
     def GET(*args,**vars):
@@ -61,7 +59,7 @@ def api():
     ##AGUSTIN##
     def PUT(table_name, record_id,**vars):
         db(db[table_name].id==record_id).update(**vars)
-        return db(db.product.id==record_id).select(orderby=db.product.name)
+        return locals()
     
     ##AGUSTIN##
     def DELETE(table_name,record_id):
