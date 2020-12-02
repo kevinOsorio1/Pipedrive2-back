@@ -139,6 +139,9 @@ def api():
             return el_name, ' con id ', record_id, ' eliminado satisfactoriamente.'
         else:
             return 'No se encontraron coincidencias.'
+        
+    def OPTIONS(*args,**vars):
+        return True
 
     return locals()
 

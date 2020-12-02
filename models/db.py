@@ -1,4 +1,4 @@
-db = DAL('mysql://root@localhost:3306/pypedrive2')             #puerto:3306 Chris / puerto:8080 Agustin
+db = DAL('mysql://root@localhost:3306/pypedrive2', migrate=False, fake_migrate=False)             #puerto:3306 Chris / puerto:8080 Agustin
 
 from gluon.contrib.appconfig import AppConfig
 #from gluon.tools import Auth                                   No conciderar en primera iteracion
