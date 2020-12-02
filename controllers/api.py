@@ -103,9 +103,13 @@ def api():
     
     ##AGUSTIN##
     def PUT(table_name, record_id,**vars):
+        for el in vars:
+            if el == "id" or el == "owner_id" or el == "status":
+                return 'Está intentando modificar un parametro no permitido ("id","owner_id", "status")'
+                       
         db(db[table_name].id==record_id).update(**vars)
         return locals()
-    
+
     ##AGUSTIN##
     def DELETE(table_name,record_id):
         el = db(db[table_name].id==record_id).select().first()
