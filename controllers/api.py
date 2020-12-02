@@ -8,7 +8,14 @@ def api():
         patterns = 'auto'
         parser = db.parse_as_rest(patterns,args,vars)
         if parser.status == 200:
-            return dict(content=parser.response)
+            if args[0] == 'product':
+                for el in parser.response:
+                    category = db(db.category.id == el.category_id).select()
+                    user = db(db.user.id == el.owner_id).select()
+                    el.category = category[0].name
+                    el.owner = user[0].name
+            result = {args[0]:parser.response}
+            return result
         else:
             raise HTTP(parser.status,parser.error)
 
