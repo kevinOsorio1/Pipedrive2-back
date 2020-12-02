@@ -4,6 +4,11 @@ from datetime import datetime
 @request.restful()
 def api():
     response.view = 'generic.json'
+    response.headers["Access-Control-Allow-Origin"] = '*'
+    response.headers['Access-Control-Max-Age'] = 86400
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = '*'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
 
     # GET_ALL pipedrive2/api/api/{table_name}.json
     #
