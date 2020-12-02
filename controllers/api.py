@@ -2,8 +2,42 @@
 def api():
     response.view = 'generic.json'
 
-    #GET_ALL pipedrive2/api/api/product.json
-    #GET_BY pipedrive2/api/api/product/id/2.json
+    #GET_ALL pipedrive2/api/api/{table_name}.json
+    #
+    #GET_BY pipedrive2/api/api/{table_name}/id/{id}.json
+    #
+    #CREATE pipedrive2/api/api/product
+    #
+    #    {
+    #        "id": int,
+    #        "name": string,
+    #        "code": string,
+    #        "description": string,
+    #        "unit": string,
+    #        "owner_id": int,
+    #        "category_id": int,
+    #        "status": 0 | 1,
+    #        "category": category,
+    #        "owner": user
+    #    }
+    #
+    #UPDATE pipedrive2/api/api/product
+    #
+    #    {
+    #        "name": string,
+    #        "code": string,
+    #        "description": string,
+    #        "unit": string,
+    #        "category_id": int,
+    #        "status": 0 | 1,
+    #        "category": category,
+    #        "owner": user
+    #    }
+    #
+    #SOFT-DELETE pipedrive2/api/api/product/{id}
+    #/pipedrive2/api/api/product/{id}
+    
+    ##CHRIS##
     def GET(*args,**vars):
         patterns = 'auto'
         parser = db.parse_as_rest(patterns,args,vars)
@@ -18,18 +52,19 @@ def api():
             return result
         else:
             raise HTTP(parser.status,parser.error)
-
+            
+    ##CHRIS##
     def POST(table_name,**vars):
         db[table_name].validate_and_insert(**vars)
         return 'Elemento ',table_name, " registrado satisfactoriamente"
-
+    
+    ##AGUSTIN##
     def PUT(table_name, record_id,**vars):
         db(db[table_name].id==record_id).update(**vars)
         return db(db.product.id==record_id).select(orderby=db.product.name)
-
+    
+    ##AGUSTIN##
     def DELETE(table_name,record_id):
-        #prod = db(db[table_name].id==record_id)
-        #prod.update(status=0)
         el = db(db[table_name].id==record_id).select().first()
         if el.status != 0:
             el.update_record(status=0)
