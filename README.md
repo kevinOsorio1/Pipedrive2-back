@@ -1,14 +1,14 @@
 <h1>Pipedrive2-back<h1>
 
-#Replica de prueba en http://agustinfranchetti.pythonanywhere.com/ con las siguientes rutas de endpoints:
+Replica de prueba en http://agustinfranchetti.pythonanywhere.com/ con las siguientes rutas de endpoints:
 
-#for now, we're going to be foccusing on table "product"
+for now, we're going to be foccusing on table "product"
 
-<h2>GET ALL ELEMENTS OF A CERTAIN GROUP<h2>
+- GET ALL ELEMENTS OF A CERTAIN GROUP<h3>
   
-- GET pipedrive2/api/api/{table_name}
+    - GET pipedrive2/api/api/{table_name}
 
-  - returns:
+     - returns:
   
 ```json
  {
@@ -35,11 +35,11 @@
 }
 ```
       
-<h2>GET A SPECIFIC ELEMENT BY ID<h2>
+- GET A SPECIFIC ELEMENT BY ID
   
-- GET pipedrive2/api/api/{table_name}/id/{id}
+    - GET pipedrive2/api/api/{table_name}/id/{id}
   
-  -returns:
+    - returns:
   
 ```json
 {
@@ -64,12 +64,11 @@
     }
 }
 ```
-
-<h2>CREATE AN ELEMENT<h2>
+- CREATE AN ELEMENT
   
-- POST pipedrive2/api/api/{table_name}
+    - POST pipedrive2/api/api/{table_name}
 
-  - Fileds marked with (*) are obligatory
+     - Fileds marked with (*) are obligatory
   
 ```json
 {
@@ -82,11 +81,9 @@
 }
 ```
 
-<h2>UPDATE AN ELEMENT<h2>
-  
-- PUT pipedrive2/api/api/{table_name}
-
-  -You can update any of the following
+- UPDATE AN ELEMENT
+    - PUT pipedrive2/api/api/{table_name}
+    - You can update any of the following
   
 ```json
 {
@@ -98,8 +95,8 @@
 }
 ```
 
-<h2>SOFT-DELETE AN ELEMENT<h2>
+- SOFT-DELETE AN ELEMENT
   
-- DELETE pipedrive2/api/api/{table_name}/{id}<br>
+    - DELETE pipedrive2/api/api/{table_name}/{id}<br>
   
-  - If succesful, returns "Product con id 2 eliminado satisfactoriamente.". Else returns an error
+    - If succesful, returns "Product con id 2 eliminado satisfactoriamente.". Else returns an error
