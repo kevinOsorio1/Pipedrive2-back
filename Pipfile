@@ -6,8 +6,13 @@ name = "pypi"
 [packages]
 pymysql = "*"
 pytest = "*"
+mongoengine = "*"
+dnspython = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.8"
+
+[packages.pymongo]
+extras = [ "aws",]
